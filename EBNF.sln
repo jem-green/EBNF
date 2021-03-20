@@ -5,6 +5,37 @@ VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBNFForm", "EBNFForm\EBNFForm.csproj", "{D1CA24CD-3C6D-4FF2-85A9-BE33E33D55C1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Standard", "Standard", "{6C13D150-EDBB-43CE-A3C7-E389A1CBEAC7}"
+	ProjectSection(SolutionItems) = preProject
+		Standard\iso-14977.pdf = Standard\iso-14977.pdf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manual", "Manual", "{C4C09C3C-5E57-4A30-BD05-04F3A71742A9}"
+	ProjectSection(SolutionItems) = preProject
+		Manual\choose.JPG = Manual\choose.JPG
+		Manual\Linebreak.GIF = Manual\Linebreak.GIF
+		Manual\manual.html = Manual\manual.html
+		Manual\nonterminal.GIF = Manual\nonterminal.GIF
+		Manual\open.JPG = Manual\open.JPG
+		Manual\optimize1.GIF = Manual\optimize1.GIF
+		Manual\optimize1not.GIF = Manual\optimize1not.GIF
+		Manual\optimize2.GIF = Manual\optimize2.GIF
+		Manual\optimize2not.GIF = Manual\optimize2not.GIF
+		Manual\Quote.GIF = Manual\Quote.GIF
+		Manual\Rule1.GIF = Manual\Rule1.GIF
+		Manual\Rule2.GIF = Manual\Rule2.GIF
+		Manual\Rule3.GIF = Manual\Rule3.GIF
+		Manual\settings.JPG = Manual\settings.JPG
+		Manual\terminal.GIF = Manual\terminal.GIF
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grammars", "Grammars", "{60D4235F-D05B-4884-8BBA-1C95AC393A6A}"
+	ProjectSection(SolutionItems) = preProject
+		Grammars\example.ebnf = Grammars\example.ebnf
+		Grammars\java.ebnf = Grammars\java.ebnf
+		Grammars\modula2.ebnf = Grammars\modula2.ebnf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -30,20 +30,45 @@ using System.Text;
 
 namespace EBNFForm
 {
-	public class Scanner
+	public static class Scanner
 	{
         #region Variables
 
         const char EOL = '\n';
-		const int eofSym = 0; /* pdt */
+		
+		const int eofSym = 0;
+		const int noSym = 13;
+
+
 		const int charSetSize = 256;
 		const int maxT = 13;
-		const int noSym = 13;
+
+
+		//static short[] start = {
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  2,  0,  0,  0,  0,  3, 10, 11,  0,  0,  0,  0,  8,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7,  0,  0,
+	 // 0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+	 // 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 12,  5, 13,  0,  1,
+	 // 0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+	 // 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 14,  9, 15,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 // -1};
+
+
 		static short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  2,  0,  0,  0,  0,  3, 10, 11,  0,  0,  0,  0,  8,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7,  0,  0,
+	  0,  0,  2,  0,  0,  0,  0,  3, 10, 11,  0,  0,  16,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  8,  0,  7,  0,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 12,  5, 13,  0,  1,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -70,10 +95,38 @@ namespace EBNFForm
 		static Token tokens;     // the complete input token stream
 		static Token pt;         // current peek token
 
-        #endregion
-        #region Methods
+		public enum Kind : int
+        {
+			terminal = 2
+        }
 
-        public static void Init(string fileName)
+		public enum State : int
+        {
+			End = -1,
+			None = 0,
+			One = 1,				// Any char A-Z, a-z
+			Double = 2,				// "
+			Single = 3,				// '
+			Four = 4,				// Think this is a string
+			alt = 5,				// \
+			Six = 6,				// Trys to address control characters \n for wraping
+			definition = 7,			// =
+			termination = 8,		// ;
+			alternation = 9,		// |
+			groupingStart = 10,		// (
+			groupingEng = 11,		// )
+			optionalStart =	12,		// [
+			optionalEnd = 13,       // ]
+			repetitionStart = 14,	// {
+			repetitionEng = 15,     // }
+			concatination = 16		// ,
+									// concatenation
+		}
+
+		#endregion
+		#region Methods
+
+		public static void Init(string fileName)
 		{
 			FileStream s = null;
 			try
@@ -88,20 +141,32 @@ namespace EBNFForm
 			}
 			finally
 			{
-				if (s != null) s.Close();
+				if (s != null)
+				{
+					s.Close();
+				}
 			}
 		}
 
 		public static void Init(Stream s)
 		{
+			// Consider adjusting the EBNF terminators
+			// 
+
 			Buffer.Fill(s);
-			pos = -1; line = 1; lineStart = 0;
+			pos = -1;
+			line = 1;
+			lineStart = 0;
 			oldEols = 0;
 			NextCh();
 			ignore = new BitArray(charSetSize + 1);
-			ignore[' '] = true;  // blanks are always white space
-			ignore[9] = true; ignore[10] = true; ignore[13] = true;
+			ignore[' '] = true;		// Spc - blanks are always white space
+			ignore[9] = true;		// Tab
+			ignore[10] = true;		// Cr
+			ignore[13] = true;      // Lf
+			ignore[','] = true;		// Comma
 			//--- AW: fill token list
+
 			tokens = new Token();  // first token is a dummy
 			Token node = tokens;
 			do
@@ -116,14 +181,25 @@ namespace EBNFForm
 
 		static void NextCh()
 		{
-			if (oldEols > 0) { ch = EOL; oldEols--; }
+			if (oldEols > 0)
+			{
+				ch = EOL;
+				oldEols--;
+			}
 			else
 			{
 				ch = (char)Buffer.Read(); pos++;
 				// replace isolated '\r' by '\n' in order to make
 				// eol handling uniform across Windows, Unix and Mac
-				if (ch == '\r' && Buffer.Peek() != '\n') ch = EOL;
-				if (ch == EOL) { line++; lineStart = pos + 1; }
+				if (ch == '\r' && Buffer.Peek() != '\n')
+				{
+					ch = EOL;
+				}
+				if (ch == EOL)
+				{
+					line++;
+					lineStart = pos + 1;
+				}
 			}
 		}
 
@@ -135,57 +211,151 @@ namespace EBNFForm
 			}
 		}
 
-		/* AW Scan() renamed to NextToken() */
 		static Token NextToken()
 		{
 			while (ignore[ch]) NextCh();
 
 			t = new Token();
-			t.pos = pos; t.col = pos - lineStart + 1; t.line = line;
+			t.pos = pos;
+			t.col = pos - lineStart + 1;
+			t.line = line;
 			int state = start[ch];
 			StringBuilder buf = new StringBuilder(16);
 			buf.Append(ch); NextCh();
 
 			switch (state)
 			{
-				case -1: { t.kind = eofSym; goto done; } // NextCh already done /* pdt */
-				case 0: { t.kind = noSym; goto done; }   // NextCh already done
-				case 1:
-					if ((ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z')) { buf.Append(ch); NextCh(); goto case 1; }
-					else { t.kind = 1; goto done; }
-				case 2:
-					if ((ch >= ' ' && ch <= '!' || ch >= '#' && ch <= '~')) { buf.Append(ch); NextCh(); goto case 2; }
-					else if (ch == '"') { buf.Append(ch); NextCh(); goto case 4; }
-					else { t.kind = noSym; goto done; }
-				case 3:
-					if ((ch >= ' ' && ch <= '&' || ch >= '(' && ch <= '~')) { buf.Append(ch); NextCh(); goto case 3; }
-					else if (ch == 39) { buf.Append(ch); NextCh(); goto case 4; }
-					else { t.kind = noSym; goto done; }
+				case -1:	// Assume end
+					{
+						t.kind = eofSym;
+						goto done;
+					} // NextCh already done /* pdt */
+				case 0:		// Assume not valid symbol
+					{
+						t.kind = noSym;
+						goto done;
+					}   // NextCh already done
+				case 1:		// char
+					if ((ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z'))
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 1;
+					}
+					else
+					{
+						t.kind = 1;		// Assume a string
+						goto done;
+					}
+				case 2:	// 2 - Quote 34 '"'
+					if ((ch >= ' ' && ch <= '!' || ch >= '#' && ch <= '~'))
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 2;		// Keep checking
+					}
+					else if (ch == '"')		// Terminator Quote '"'
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 4;
+					}
+					else
+					{
+						t.kind = noSym;
+						goto done;
+					}
+				case 3:		// 3 - Single quote "'"
+					if ((ch >= ' ' && ch <= '&' || ch >= '(' && ch <= '~'))
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 3;
+					}
+					else if (ch == 39)
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 4;
+					}
+					else
+					{
+						t.kind = noSym;
+						goto done;
+					}
 				case 4:
-					{ t.kind = 2; goto done; }
-				case 5:
-					if (ch == 'n') { buf.Append(ch); NextCh(); goto case 6; }
-					else { t.kind = noSym; goto done; }
+					{
+						t.kind = 2;		// Assume this is a string
+						goto done;
+					}
+				case 5:	// 5 - Forward slash "/" Assume an excape character
+					if (ch == 'n')
+					{
+						buf.Append(ch);
+						NextCh();
+						goto case 6;
+					}
+					//else if (ch == '"')
+     //               {
+					//	buf.Append(ch);
+					//	NextCh();
+					//	goto case 6;
+					//}
+					else
+					{
+						t.kind = noSym;
+						goto done;
+					}
 				case 6:
-					{ t.kind = 3; goto done; }
+					{
+						t.kind = 3;
+						goto done;
+					}
 				case 7:
-					{ t.kind = 4; goto done; }
+					{
+						t.kind = 4;
+						goto done;
+					}
 				case 8:
-					{ t.kind = 5; goto done; }
+					{
+						t.kind = 5;
+						goto done;
+					}
 				case 9:
-					{ t.kind = 6; goto done; }
+					{
+						t.kind = 6;
+						goto done;
+					}
 				case 10:
-					{ t.kind = 7; goto done; }
+					{
+						t.kind = 7;
+						goto done;
+					}
 				case 11:
-					{ t.kind = 8; goto done; }
+					{
+						t.kind = 8;
+						goto done;
+					}
 				case 12:
-					{ t.kind = 9; goto done; }
+					{
+						t.kind = 9;
+						goto done; 
+					}
 				case 13:
-					{ t.kind = 10; goto done; }
+					{
+						t.kind = 10;
+						goto done;
+					}
 				case 14:
-					{ t.kind = 11; goto done; }
+					{
+						t.kind = 11;
+						goto done;
+					}
 				case 15:
-					{ t.kind = 12; goto done; }
+					{
+						t.kind = 12;
+						goto done;
+					}
 
 			}
 		done:

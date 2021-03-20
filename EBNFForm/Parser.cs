@@ -27,7 +27,7 @@ using System;
 
 namespace EBNFForm
 {
-	public class Parser
+	public static class Parser
 	{
 		#region Variables
 
@@ -50,13 +50,19 @@ namespace EBNFForm
 
 		static void SynErr(int n)
 		{
-			if (errDist >= minErrDist) Errors.SynErr(la.line, la.col, n);
+			if (errDist >= minErrDist)
+			{
+				Errors.SynErr(la.line, la.col, n);
+			}
 			errDist = 0;
 		}
 
 		public static void SemErr(string msg)
 		{
-			if (errDist >= minErrDist) Errors.Error(t.line, t.col, msg);
+			if (errDist >= minErrDist)
+			{
+				Errors.Error(t.line, t.col, msg);
+			}
 			errDist = 0;
 		}
 
@@ -66,15 +72,25 @@ namespace EBNFForm
 			{
 				t = la;
 				la = Scanner.Scan();
-				if (la.kind <= maxT) { ++errDist; break; }
-
+				if (la.kind <= maxT)
+				{
+					++errDist;
+					break;
+				}
 				la = t;
 			}
 		}
 
 		static void Expect(int n)
 		{
-			if (la.kind == n) Get(); else { SynErr(n); }
+			if (la.kind == n)
+			{
+				Get();
+			}
+			else
+			{
+				SynErr(n);
+			}
 		}
 
 		static bool StartOf(int s)
@@ -84,19 +100,32 @@ namespace EBNFForm
 
 		static void ExpectWeak(int n, int follow)
 		{
-			if (la.kind == n) Get();
+			if (la.kind == n)
+			{
+				Get();
+			}
 			else
 			{
 				SynErr(n);
-				while (!StartOf(follow)) Get();
+				while (!StartOf(follow))
+				{
+					Get();
+				}
 			}
 		}
 
 		static bool WeakSeparator(int n, int syFol, int repFol)
 		{
 			bool[] s = new bool[maxT + 1];
-			if (la.kind == n) { Get(); return true; }
-			else if (StartOf(repFol)) return false;
+			if (la.kind == n)
+			{
+				Get();
+				return true;
+			}
+			else if (StartOf(repFol))
+			{
+				return false;
+			}
 			else
 			{
 				for (int i = 0; i <= maxT; i++)
@@ -104,7 +133,10 @@ namespace EBNFForm
 					s[i] = set[syFol, i] || set[repFol, i] || set[0, i];
 				}
 				SynErr(n);
-				while (!s[la.kind]) Get();
+				while (!s[la.kind])
+				{
+					Get();
+				}
 				return StartOf(syFol);
 			}
 		}
@@ -124,7 +156,10 @@ namespace EBNFForm
 			Node n;
 			Symbol s = Symbol.Find(t.val);  //look if already known
 
-			if (s == null) n = new Node(new Symbol(Node.nt, t.val));
+			if (s == null)
+			{
+				n = new Node(new Symbol(Node.nt, t.val));
+			}
 			else
 			{
 				if (s.typ == Node.nt)
@@ -158,7 +193,11 @@ namespace EBNFForm
 			{
 				Get();
 				Alt(out g1);
-				if (first) { Graph.MakeFirstAlt(g); first = false; }
+				if (first)
+				{
+					Graph.MakeFirstAlt(g);
+					first = false; 
+				}
 				Graph.MakeAlternative(g, g1);
 
 			}
@@ -173,8 +212,9 @@ namespace EBNFForm
 				Graph.MakeSequence(g, g1);
 			}
 			if (g.l == null && g.r == null)
+			{
 				g = new Graph(new Node(Node.eps, null));
-
+			}
 		}
 
 		static void Sym(out Graph g)
@@ -187,8 +227,14 @@ namespace EBNFForm
 						Get();
 						Symbol s = Symbol.Find(t.val);
 						Node n;
-						if (s != null) n = new Node(s);
-						else n = new Node(new Symbol(Node.t, t.val)); //type could be nt, but not known yet
+						if (s != null)
+						{
+							n = new Node(s);
+						}
+						else //type could be nt, but not known yet
+						{ 
+							n = new Node(new Symbol(Node.t, t.val));
+						} 
 						g = new Graph(n);
 
 						break;
@@ -199,7 +245,6 @@ namespace EBNFForm
 						char[] trim = new char[1];
 						trim[0] = t.val[0];
 						String temp = t.val.Trim(trim);
-
 						Node n = new Node(new Symbol(Node.t, temp));
 						g = new Graph(n);
 
@@ -219,6 +264,7 @@ namespace EBNFForm
 						Expr(out g1);
 						Expect(8);
 						g = g1;
+
 						break;
 					}
 				case 9:
@@ -241,7 +287,11 @@ namespace EBNFForm
 
 						break;
 					}
-				default: SynErr(14); break;
+				default:
+					{
+						SynErr(14);
+						break;
+					}
 			}
 		}
 

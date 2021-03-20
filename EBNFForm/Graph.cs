@@ -24,15 +24,6 @@ using System.Drawing;
 
 namespace EBNFForm
 {
-
-	
-
-//---------------------------------------------------------------------
-// Syntax graph (class Node, class Graph)
-//---------------------------------------------------------------------
-
-
-
 	public class Graph
 	{
 
@@ -75,7 +66,8 @@ namespace EBNFForm
 		{
 			if (g1.l == null && g1.r == null)
 			{/*case: g1 is empty */
-				g1.l = g2.l; g1.r = g2.r;
+				g1.l = g2.l;
+				g1.r = g2.r;
 			}
 			else
 			{
@@ -83,7 +75,9 @@ namespace EBNFForm
 				Node p = g1.r.next; g1.r.next = g2.l; // link head node
 				while (p != null)
 				{  // link substructure
-					Node q = p.next; p.next = g2.l; p.up = true;
+					Node q = p.next;
+					p.next = g2.l;
+					p.up = true;
 					p = q;
 				}
 				g1.r = g2.r;
@@ -97,7 +91,9 @@ namespace EBNFForm
 			g.r = g.l;
 			while (p != null)
 			{
-				Node q = p.next; p.next = g.l; p.up = true;
+				Node q = p.next;
+				p.next = g.l;
+				p.up = true;
 				p = q;
 			}
 		}
@@ -114,7 +110,9 @@ namespace EBNFForm
 			Node p = g.r;
 			while (p != null)
 			{
-				Node q = p.next; p.next = null; p = q;
+				Node q = p.next;
+				p.next = null;
+				p = q;
 			}
 		}
 	}

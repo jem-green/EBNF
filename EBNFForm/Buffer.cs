@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EBNFForm
 {
-	public class Buffer
+	public static class Buffer
 	{
 		public const char EOF = (char)256;
 		static byte[] buf;

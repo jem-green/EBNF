@@ -616,10 +616,12 @@ namespace EBNFForm
 				else g = EbnfForm.BitmapGraphics;
 				PointF p = new PointF(beginningXCoordinate, beginningYCoordinate - 30);
 				g.DrawString(s.name, new Font("Times New Roman", 14), new SolidBrush(Color.Black), p.X - 20, p.Y);
+
 				//g.DrawRectangle(new Pen(Color.Orange,2),p.X,p.Y+30,s.graph.graphSize.Width,s.graph.graphSize.Height);
 				g.DrawLine(linePen, beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2, s.graph.l.posLine.Y, beginningXCoordinate, s.graph.l.posLine.Y);
+				g.FillEllipse(new SolidBrush(linePen.Color), new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - arrowSize), (int)(s.graph.l.posLine.Y- arrowSize), arrowSize*2, arrowSize*2));
 				s.graph.l.drawComponents(p, s.graph.graphSize);
-
+				// want to draw to node
 			}
 		}
 
@@ -663,7 +665,7 @@ namespace EBNFForm
 
 		/*
 		 * Draws the components from left to right.
-		 * Rekursive procedure. Therefore also the drawComponentsInverse procedure is used.
+		 * Recursive procedure. Therefore also the drawComponentsInverse procedure is used.
 		 * Each component paints itself and then they give their coordinates to its innercomponents.
 		*/
 		public void drawComponents(PointF p, Size s)
@@ -871,8 +873,8 @@ namespace EBNFForm
 					samelevel = false;
 				if (n.next == null && firstLevel)
 				{
-					g.DrawLine(linePen, p.X, n.posLine.Y, p.X + componentGapWidth / 4, n.posLine.Y);
-					drawArrow(linePen, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, "right");
+					g.DrawLine(LinePen, p.X, n.posLine.Y, p.X + componentGapWidth / 4, n.posLine.Y);
+					g.FillEllipse(new SolidBrush(linePen.Color), new RectangleF(p.X + componentGapWidth / 4 - arrowSize, n.posLine.Y - arrowSize, arrowSize * 2, arrowSize * 2));
 				}
 				n = n.next;
 			}

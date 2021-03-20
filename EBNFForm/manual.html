@@ -32,15 +32,15 @@ Create a .ebnf file with a rule just like “A= a [b] c.”. A .ebnf file is just a 
 
 <h3>Step 2:</h3>
 Start the program and open the .ebnf file via the menu entry “Load Grammar
-”. The program parses it. If there exist errors in the .ebnf file, it would be reported in the log window. Otherwise the rule menu will be activated.<p><img src="open.JPG" alt="Open a .ebnf file">
+”. The program parses it. If there exist errors in the .ebnf file, it would be reported in the log window. Otherwise the rule menu will be activated.<p><img src="Manual\open.JPG" alt="Open a .ebnf file">
 
 <h3>Step 3:</h3>
 Choose a rule from the loaded grammar in the rule menu. The chosen rule will be drawn.
-<p><img src="choose.JPG" alt="Chose a rule">
+<p><img src="Manual\choose.JPG" alt="Chose a rule">
 
 <h3>Step 4 (optional):</h3>
 Change the look of the syntax diagram in the menu File/Settings.
-<p><img src="settings.JPG" alt="Settings">
+<p><img src="Manual\settings.JPG" alt="Settings">
 
 <h3>Step 5 (optional):</h3>
 Save the syntax diagram or just copy/paste it.
@@ -62,34 +62,34 @@ A grammar consists of a set of rules. A rule consist of an identifier, followed 
 <h3>Terminal symbol:</h3>
 
 A terminal symbol can be any string. They are separated by space characters. <br>For example in the rule “A = a b [c].” a, b and c are terminal symbols. 
-<p><img src="terminal.GIF" alt="Simple example"><p>
+<p><img src="Manual\terminal.GIF" alt="Simple example"><p>
 It is also possible to put a terminal symbol under quotes (“) or apostrophes (‘) which is required in some cases. 
 (eg. Quote = "'" a "'".)<p>
-<img src="Quote.GIF" alt="Simple example"><p>It’s also needed for numbers, because identifiers must begin with a character.
+<img src="Manual\Quote.GIF" alt="Simple example"><p>It’s also needed for numbers, because identifiers must begin with a character.
 
 
 <h3>Nonterminal symbol:</h3>
 
 A nonterminal symbol can’t be created in an explicit way.<br>If a terminal symbol matches the string of an rule identifier, it is automatically considered as a nonterminal symbol.<br>
 For example, in the rule “A = a A | b.” A is a nonterminal symbol.
-<p><img src="nonterminal.GIF" alt="Simple example">
+<p><img src="Manual\nonterminal.GIF" alt="Simple example">
 
 <h3>Meta symbols:</h3>
 
 <h4>- option “[“ “]”</h4>
 The sequence of symbols within these brackets are optional.<br>
 (e.g. Rule1 = “begin [optional things] end.”)
-<p><img src="Rule1.GIF" alt="Simple example">
+<p><img src="Manual\Rule1.GIF" alt="Simple example">
 
 <h4>-iteration “{“ “}”</h4>
 The sequence of symbols within these brackets can occur from zero to infinite times.<br>
 (e.g. Rule2 = “begin {and again} end.”)
-<p><img src="Rule2.GIF" alt="Simple example">
+<p><img src="Manual\Rule2.GIF" alt="Simple example">
 
 <h4>-alternative “|”</h4>
 It allows to choose a sequence of symbols.<br>
 (e.g. Rule3 = “I am a (good | bad) programmer.”)
-<p><img src="Rule3.GIF" alt="Simple example">
+<p><img src="Manual\Rule3.GIF" alt="Simple example">
 
 <h4>-grouping “(“ “)”</h4>
 These brackets are used to group sequences of symbols in a mathematical way.
@@ -99,12 +99,12 @@ These brackets are used to group sequences of symbols in a mathematical way.
 <h3>Special symbol – Line break:</h3>
 This program allows to make explicit line breaks within a syntax diagram. To do this, use “\n” in the outer structure of the rule. That means, it will be ignored within an option, iteration or alternative.<br>
 (e.g. “Linebreak = First line \n Second line \n End.”)
-<p><img src="Linebreak.GIF" alt="Simple example">
+<p><img src="Manual\Linebreak.GIF" alt="Simple example">
 
 
 
 <h2><a name="Menu">Menu</a></h2>
-<p><img src="open.JPG" alt="Menu">
+<p><img src="Manual\open.JPG" alt="Menu">
 <h3>File:</h3>
 
 <h4>Load Grammar
@@ -113,14 +113,16 @@ Allows to load a grammar file (*.ebnf).
 
 <h4>Save As
  :</h4>
-The current rule can be stored as .GIF file.
+The current rule can be stored as .GIF file or as .EMF file.
+The Windows Enhanced Metafile Format .EMF is based on vectorgraphics and
+therefore better suitable for printing or zooming.
 
 <h4>Copy:</h4>
 The current rule is copied to the clipboard as a picture. It is possible to paste it into any program which allows to paste from the clipboard.
 	
 <h4>Settings
  :</h4>
-<p><img src="settings.JPG" alt="Settings"><br>
+<p><img src="Manual\settings.JPG" alt="Settings"><br>
 In the menu settings the look of the syntax diagrams can be changed.
 
 <h5>Font</h5>
@@ -147,9 +149,12 @@ This happens implicitly. It is possible to disable them in the settings menu.<br
 If the syntax graph is optimized, redundant und needless productions within a rule are deleted. That means empty nodes, iterations, options and alternatives are removed. If there is an empty alternative, it is moved to the first position. Already existing alternatives are removed.
 Furthermore some productions are visualized in a more elegant way,
 <br> for example “A = ab {ab}.”
-<p><img src="optimize1not.GIF" alt="Optimize"><img src="optimize1.GIF" alt="Optimize"><p>
+<p><img src="Manual\optimize1not.GIF" alt="Optimize"><img src="Manual\optimize1.GIF" alt="Optimize"><p>
 or “B = ab { cd ab}.”
-<p><img src="optimize2not.GIF" alt="Optimize"><img src="optimize2.GIF" alt="Optimize"><p>
+<p><img src="Manual\optimize2not.GIF" alt="Optimize"><img src="Manual\optimize2.GIF" alt="Optimize"><p>
+
+<h3>Navigation:</h3>
+It is possible to navigate through an grammar by left-clicking on nonterminal symbols. Right-clicking allows to go back.
 
 <h2><a name="License">License & Copyright</a></h2>
 

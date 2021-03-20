@@ -55,5 +55,10 @@
     <Compile Include="Symbol.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="manual.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

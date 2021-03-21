@@ -80,6 +80,7 @@ namespace EBNFForm
 
 		private void InitializeComponent()
 		{
+			this.Icon = Resources.ebnf;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(800, 600);
 			this.StartPosition = FormStartPosition.CenterScreen;
@@ -862,6 +863,8 @@ namespace EBNFForm
 
 			gp.Size = new Size(about.Width - 37, about.Height - 100);
 			gp.Location = new Point(15, 10);
+
+
 
 			info.Text = "EBNF Visualizer 1.1\n\nCopyright (c) 2005 Stefan Schoergenhumer, Markus Dopler \n\nSupported by Hanspeter Moessenboeck, University of Linz\n\nThis program is licensed under GPL. For further information see license.txt.";
 			info.Location = new Point(5, 10);

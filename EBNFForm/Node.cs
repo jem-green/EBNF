@@ -141,20 +141,24 @@ namespace EBNFForm
 		private static int defaultComponentGapHeight = 10;
 		private static Font defaultCharFont = new Font("Times", 12);
 		private static int defaultArrowSize = 3;
+		private static int defaultCircleDiameter = 6;
 		private static Pen defaultLinePen = new Pen(Color.Black, 1);
+		private static SolidBrush defaultCircleBrush = new SolidBrush(Color.Black);
 		private static int defaultSymbolGapHeight = 0;
 		private static Color defaultCharColor = Color.Black;
 
 		/**********initialize variables with default settings***********/
 		private static int componentArcSize = defaultComponentArcSize;          // size of the arcs
-		private static int componentGapWidth = defaultComponentGapWidth;            // gap between subcomponent size and actual size
+		private static int componentGapWidth = defaultComponentGapWidth;        // gap between subcomponent size and actual size
 		private static int componentGapHeight = defaultComponentGapHeight;      // gap between subcomponent size and actual size
-		private static Font charFont = defaultCharFont;                 // font of the t and nt symbols
-		private static int arrowSize = defaultArrowSize;                    // size of the arrows
-		private static Pen linePen = defaultLinePen;                    // color and thickness of the line
+		private static Font charFont = defaultCharFont;							// font of the t and nt symbols
+		private static int arrowSize = defaultArrowSize;						// size of the arrows
+		private static int circleDiameter = defaultCircleDiameter;              // size of the circles
+		private static SolidBrush circleBrush = defaultCircleBrush;				// colour of the circle
+		private static Pen linePen = defaultLinePen;							// color and thickness of the line
 		private static int symbolGapHeight = defaultSymbolGapHeight;            // gap between the line of the symbol and the font
-		private static Color charColor = defaultCharColor;                  // fontColor of the T and NT symbols
-		private static int fontHeight = (int)defaultCharFont.Height;        // needed to make the gap between the symbol and and the font possible
+		private static Color charColor = defaultCharColor;						// fontColor of the T and NT symbols
+		private static int fontHeight = (int)defaultCharFont.Height;			// needed to make the gap between the symbol and and the font possible
 		private static bool optimizeGraph = true;                               // enable optimizations?
 
 		/*****************other variables needed for the drawing********/
@@ -203,6 +207,18 @@ namespace EBNFForm
 			get
 			{
 				return arrowSize;
+			}
+		}
+
+		public static int CircleDiameter
+		{
+			set
+			{
+				circleDiameter = value;
+			}
+			get
+			{
+				return circleDiameter;
 			}
 		}
 
@@ -271,6 +287,18 @@ namespace EBNFForm
 			}
 		}
 
+		public static SolidBrush CircleBrush
+		{
+			set
+			{
+				circleBrush = value;
+			}
+			get
+			{
+				return circleBrush;
+			}
+		}
+
 		public static Size SymbolSize
 		{
 			get
@@ -282,14 +310,16 @@ namespace EBNFForm
 		public static void restoreDefaultSettings()
 		{
 			componentArcSize = defaultComponentArcSize;         // size of the arcs
-			componentGapWidth = defaultComponentGapWidth;           // gap between subcomponent size and actual size
+			componentGapWidth = defaultComponentGapWidth;       // gap between subcomponent size and actual size
 			ComponentGapHeight = defaultComponentGapHeight;     // gap between subcomponent size and actual size
-			charFont = defaultCharFont;                 // font of the t and nt symbols
-			arrowSize = defaultArrowSize;                   // size of the arrows
-			linePen = new Pen(Color.Black, 1);          // color and thickness of the line
+			charFont = defaultCharFont;							// font of the t and nt symbols
+			arrowSize = defaultArrowSize;						// size of the arrows
+			linePen = new Pen(Color.Black, 1);                  // color and thickness of the line
+			circleDiameter = defaultCircleDiameter;             // diameter fo the circle
+			circleBrush = new SolidBrush(Color.Black);			// color of the brush
 			symbolGapHeight = defaultSymbolGapHeight;           // gap between the line of the symbol and the font
-			charColor = defaultCharColor;                   // fontColor of the T and NT symbols
-			fontHeight = (int)defaultCharFont.Height;       // needed to make the gap between the symbol and and the font possible
+			charColor = defaultCharColor;						// fontColor of the T and NT symbols
+			fontHeight = (int)defaultCharFont.Height;			// needed to make the gap between the symbol and and the font possible
 			optimizeGraph = true;
 		}
 
@@ -619,7 +649,7 @@ namespace EBNFForm
 
 				//g.DrawRectangle(new Pen(Color.Orange,2),p.X,p.Y+30,s.graph.graphSize.Width,s.graph.graphSize.Height);
 				g.DrawLine(linePen, beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2, s.graph.l.posLine.Y, beginningXCoordinate, s.graph.l.posLine.Y);
-				g.FillEllipse(new SolidBrush(linePen.Color), new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - arrowSize), (int)(s.graph.l.posLine.Y- arrowSize), arrowSize*2, arrowSize*2));
+				g.FillEllipse(CircleBrush, new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - circleDiameter / 2), (int)(s.graph.l.posLine.Y- circleDiameter /2), circleDiameter, circleDiameter));
 				s.graph.l.drawComponents(p, s.graph.graphSize);
 				// want to draw to node
 			}
@@ -874,7 +904,7 @@ namespace EBNFForm
 				if (n.next == null && firstLevel)
 				{
 					g.DrawLine(LinePen, p.X, n.posLine.Y, p.X + componentGapWidth / 4, n.posLine.Y);
-					g.FillEllipse(new SolidBrush(linePen.Color), new RectangleF(p.X + componentGapWidth / 4 - arrowSize, n.posLine.Y - arrowSize, arrowSize * 2, arrowSize * 2));
+					g.FillEllipse(circleBrush, new RectangleF(p.X + componentGapWidth / 4 - circleDiameter / 2, n.posLine.Y - circleDiameter / 2, circleDiameter, circleDiameter));
 				}
 				n = n.next;
 			}

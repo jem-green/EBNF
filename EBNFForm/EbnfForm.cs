@@ -264,6 +264,9 @@ namespace EBNFForm
 		private Button buttonLineColor;
 		private Button buttonLineMore;
 		private Button buttonLineLess;
+		private Button buttonCircleColor;
+		private Button buttonCircleMore;
+		private Button buttonCircleLess;
 		private Button buttonArrowMore;
 		private Button buttonArrowLess;
 		private Button buttonHorizontalMore;
@@ -275,15 +278,18 @@ namespace EBNFForm
 		private Button buttonRestoreDefault;
 		private Label labelFont;
 		private Label labelLineColor;
+		private Label labelCircleColor;
 		private Label labelGapHeight;
 		private Label labelGapWidth;
 		private Label labelLineThickness;
 		private Label labelArrowSize;
+		private Label labelCircleDiameter;
 		private Label labelSymbolSize;
 		private FontDialog fontDialog1;
 		private ColorDialog colorDialog1;
 		private TabPage tabPageFont;
 		private TabPage tabPageLine;
+		private TabPage tabPageCircle;
 		private TabPage tabPageDimensions;
 		private TabPage tabPageOptimization;
 		private TabControl tabControl;
@@ -291,6 +297,8 @@ namespace EBNFForm
 		private GroupBox groupBoxThickness;
 		private GroupBox groupBoxArrow;
 		private GroupBox groupBoxLineColor;
+		private GroupBox groupBoxCircleColor;
+		private GroupBox groupBoxDiameter;
 		private GroupBox groupBoxHorizontal;
 		private GroupBox groupBoxVertical;
 		private GroupBox groupBoxSymbolSize;
@@ -306,6 +314,9 @@ namespace EBNFForm
 			buttonLineColor = new Button();
 			buttonLineMore = new Button();
 			buttonLineLess = new Button();
+			buttonCircleColor = new Button();
+			buttonCircleMore = new Button();
+			buttonCircleLess = new Button();
 			buttonArrowMore = new Button();
 			buttonArrowLess = new Button();
 			buttonHorizontalMore = new Button();
@@ -317,15 +328,18 @@ namespace EBNFForm
 			buttonRestoreDefault = new Button();
 			labelFont = new Label();
 			labelLineColor = new Label();
+			labelCircleColor = new Label();
 			labelGapHeight = new Label();
 			labelGapWidth = new Label();
 			labelLineThickness = new Label();
+			labelCircleDiameter = new Label();
 			labelArrowSize = new Label();
 			labelSymbolSize = new Label();
 			fontDialog1 = new FontDialog();
 			colorDialog1 = new ColorDialog();
 			tabPageFont = new TabPage();
 			tabPageLine = new TabPage();
+			tabPageCircle = new TabPage();
 			tabPageDimensions = new TabPage();
 			tabPageOptimization = new TabPage();
 			tabControl = new TabControl();
@@ -333,6 +347,8 @@ namespace EBNFForm
 			groupBoxThickness = new GroupBox();
 			groupBoxArrow = new GroupBox();
 			groupBoxLineColor = new GroupBox();
+			groupBoxDiameter = new GroupBox();
+			groupBoxCircleColor = new GroupBox(); 
 			groupBoxHorizontal = new GroupBox();
 			groupBoxVertical = new GroupBox();
 			groupBoxSymbolSize = new GroupBox();
@@ -355,6 +371,8 @@ namespace EBNFForm
 			buttonApply.Text = "Apply";
 			buttonLineMore.Text = ">";
 			buttonLineLess.Text = "<";
+			buttonCircleMore.Text = ">";
+			buttonCircleLess.Text = "<";
 			buttonArrowMore.Text = ">";
 			buttonArrowLess.Text = "<";
 			buttonHorizontalMore.Text = ">";
@@ -364,26 +382,33 @@ namespace EBNFForm
 			buttonSymbolSizeMore.Text = ">";
 			buttonSymbolSizeLess.Text = "<";
 			buttonLineColor.Text = "Change color...";
+			buttonCircleColor.Text = "Change color...";
 			buttonRestoreDefault.Text = "Restore default settings";
 			labelFont.Text = Node.CharFont.Name;
 			labelGapHeight.Text = Convert.ToString(Node.ComponentGapHeight);
 			labelGapWidth.Text = Convert.ToString(Node.ComponentGapWidth - 26);
 			tabPageFont.Text = "Font";
 			tabPageLine.Text = "Line";
+			tabPageCircle.Text = "Circle";
 			tabPageDimensions.Text = "Dimensions";
 			tabPageOptimization.Text = "Optimizations";
 			groupBoxTandNT.Text = "Terminal and nonterminal symbols";
 			groupBoxThickness.Text = "Thickness";
 			groupBoxArrow.Text = "Size of Arrow";
 			groupBoxLineColor.Text = "Color";
+			groupBoxDiameter.Text = "Diameter";
+			groupBoxCircleColor.Text = "Color";
 			groupBoxHorizontal.Text = "Horizontal";
 			groupBoxVertical.Text = "Vertical";
 			groupBoxSymbolSize.Text = "Gap between symbolline and font (vertical)";
 			groupBoxOptimization.Text = "Optimization";
 			labelLineThickness.Text = Convert.ToString(Node.LinePen.Width);
+			labelCircleDiameter.Text = Convert.ToString(Node.CircleDiameter);
 			labelArrowSize.Text = Convert.ToString(Node.ArrowSize);
 			labelSymbolSize.Text = Convert.ToString(Node.SymbolGapHeight);
 			checkBoxOptimization.Text = "Enable optimizations (reload required)";
+
+
 
 			labelFont.Font = Node.CharFont;
 			labelFont.ForeColor = Node.CharColor;
@@ -391,6 +416,7 @@ namespace EBNFForm
 			labelFont.TextAlign = ContentAlignment.MiddleCenter;
 
 			if (Node.LinePen.Width <= 1) buttonLineLess.Enabled = false;
+			if (Node.CircleDiameter <= 2) buttonCircleLess.Enabled = false;
 			if (Node.SymbolGapHeight <= 0) buttonSymbolSizeLess.Enabled = false;
 			if (Node.ArrowSize <= 1) buttonArrowLess.Enabled = false;
 			if (Node.ComponentGapHeight <= 0) buttonVerticalLess.Enabled = false;
@@ -398,6 +424,9 @@ namespace EBNFForm
 
 			labelLineThickness.Font = new Font("Times", 12);
 			labelLineThickness.TextAlign = ContentAlignment.MiddleCenter;
+
+			labelCircleDiameter.Font = new Font("Times", 12);
+			labelCircleDiameter.TextAlign = ContentAlignment.MiddleCenter;
 
 			labelArrowSize.Font = new Font("Times", 12);
 			labelArrowSize.TextAlign = ContentAlignment.MiddleCenter;
@@ -412,10 +441,15 @@ namespace EBNFForm
 			labelSymbolSize.TextAlign = ContentAlignment.MiddleCenter;
 
 			labelLineColor.BackColor = Node.LinePen.Color;
-
 			buttonLineColor.Size = new Size(100, 20);
 			buttonLineMore.Size = new Size(20, 20);
 			buttonLineLess.Size = new Size(20, 20);
+
+			labelCircleColor.BackColor = Node.CircleBrush.Color;
+			buttonCircleColor.Size = new Size(100, 20);
+			buttonCircleMore.Size = new Size(20, 20);
+			buttonCircleLess.Size = new Size(20, 20);
+
 			buttonArrowMore.Size = new Size(20, 20);
 			buttonArrowLess.Size = new Size(20, 20);
 			buttonHorizontalMore.Size = new Size(20, 20);
@@ -429,13 +463,19 @@ namespace EBNFForm
 			tabControl.Size = new Size(form1.Size.Width - 15, form1.Size.Height - 150);
 			groupBoxTandNT.Size = new Size(tabControl.Size.Width - 30, groupBoxTandNT.Size.Height);
 			groupBoxThickness.Size = new Size(100, 50);
+			
+			groupBoxDiameter.Size = new Size(100, 50);
+
+
 			groupBoxArrow.Size = new Size(100, 50);
 			groupBoxHorizontal.Size = new Size(100, 50);
 			groupBoxVertical.Size = new Size(100, 50);
 			groupBoxOptimization.Size = new Size(tabControl.Size.Width - 30, 50);
 			groupBoxLineColor.Size = new Size(155, 50);
+			groupBoxCircleColor.Size = new Size(155, 50);
 			groupBoxSymbolSize.Size = new Size(tabControl.Size.Width - 30, 50);
 			labelLineColor.Size = new Size(20, 20);
+			labelCircleColor.Size = new Size(20, 20);
 			labelFont.Size = new Size(groupBoxTandNT.Size.Width - 20, 40);
 			checkBoxOptimization.Size = new Size(220, 20);
 
@@ -443,6 +483,11 @@ namespace EBNFForm
 			groupBoxThickness.Location = new Point(10, 10);
 			groupBoxArrow.Location = new Point(10, groupBoxThickness.Height + 10);
 			groupBoxLineColor.Location = new Point(110, 10);
+
+			groupBoxDiameter.Location = new Point(10, 10);
+			groupBoxCircleColor.Location = new Point(110, 10);
+
+
 			groupBoxHorizontal.Location = new Point(10, 10);
 			groupBoxVertical.Location = new Point(110, 10);
 			groupBoxOptimization.Location = new Point(10, 10);
@@ -455,6 +500,11 @@ namespace EBNFForm
 			buttonChangeFont.Location = new Point(tabControl.Right - buttonChangeFont.Size.Width - 45, labelFont.Top + labelFont.Height + 10);
 			buttonLineLess.Location = new Point(10, 20);
 			buttonLineMore.Location = new Point(buttonLineLess.Right + 40, buttonLineLess.Top);
+
+			buttonCircleLess.Location = new Point(10, 20);
+			buttonCircleMore.Location = new Point(buttonCircleLess.Right + 40, buttonCircleLess.Top);
+
+
 			buttonArrowLess.Location = new Point(10, 20);
 			buttonArrowMore.Location = new Point(buttonLineLess.Right + 40, buttonLineLess.Top);
 			buttonHorizontalLess.Location = new Point(10, 20);
@@ -465,15 +515,19 @@ namespace EBNFForm
 			buttonSymbolSizeMore.Location = new Point(buttonSymbolSizeLess.Right + 40, buttonSymbolSizeLess.Top);
 			buttonRestoreDefault.Location = new Point((tabControl.Size.Width - buttonRestoreDefault.Size.Width) / 2, tabControl.Bottom + 20);
 			labelLineThickness.Location = new Point(buttonLineLess.Right, buttonLineLess.Top);
+			labelCircleDiameter.Location = new Point(buttonCircleLess.Right, buttonCircleLess.Top);
 			labelArrowSize.Location = new Point(buttonArrowLess.Right, buttonArrowLess.Top);
 			labelGapHeight.Location = new Point(buttonHorizontalLess.Right, buttonHorizontalLess.Top);
 			labelGapWidth.Location = new Point(buttonVerticalLess.Right, buttonVerticalLess.Top);
 			labelSymbolSize.Location = new Point(buttonSymbolSizeLess.Right, buttonSymbolSizeLess.Top);
 			labelLineColor.Location = new Point(10, 20);
 			buttonLineColor.Location = new Point(labelLineColor.Right + 10, 20);
+			labelCircleColor.Location = new Point(10, 20);
+			buttonCircleColor.Location = new Point(labelCircleColor.Right + 10, 20);
 			checkBoxOptimization.Location = new Point(10, 20);
 
 			labelLineThickness.Size = new Size(buttonLineMore.Left - buttonLineLess.Right, buttonLineLess.Height);
+			labelCircleDiameter.Size = new Size(buttonCircleMore.Left - buttonCircleLess.Right, buttonCircleLess.Height);
 			labelArrowSize.Size = new Size(buttonArrowMore.Left - buttonArrowLess.Right, buttonArrowLess.Height);
 			labelGapHeight.Size = new Size(buttonHorizontalMore.Left - buttonHorizontalLess.Right, buttonHorizontalLess.Height);
 			labelGapWidth.Size = new Size(buttonVerticalMore.Left - buttonVerticalLess.Right, buttonVerticalLess.Height);
@@ -488,6 +542,13 @@ namespace EBNFForm
 			groupBoxThickness.Controls.Add(labelLineThickness);
 			groupBoxLineColor.Controls.Add(buttonLineColor);
 			groupBoxLineColor.Controls.Add(labelLineColor);
+
+			groupBoxDiameter.Controls.Add(buttonCircleMore);
+			groupBoxDiameter.Controls.Add(buttonCircleLess);
+			groupBoxDiameter.Controls.Add(labelCircleDiameter);
+			groupBoxCircleColor.Controls.Add(buttonCircleColor);
+			groupBoxCircleColor.Controls.Add(labelCircleColor);
+
 			groupBoxArrow.Controls.Add(buttonArrowMore);
 			groupBoxArrow.Controls.Add(buttonArrowLess);
 			groupBoxArrow.Controls.Add(labelArrowSize);
@@ -504,6 +565,10 @@ namespace EBNFForm
 			tabPageLine.Controls.Add(groupBoxThickness);
 			tabPageLine.Controls.Add(groupBoxLineColor);
 			tabPageLine.Controls.Add(groupBoxArrow);
+
+			tabPageCircle.Controls.Add(groupBoxDiameter);
+			tabPageCircle.Controls.Add(groupBoxCircleColor);
+
 			tabPageDimensions.Controls.Add(groupBoxSymbolSize);
 			tabPageDimensions.Controls.Add(groupBoxHorizontal);
 			tabPageDimensions.Controls.Add(groupBoxVertical);
@@ -511,6 +576,7 @@ namespace EBNFForm
 
 			tabControl.Controls.Add(this.tabPageFont);
 			tabControl.Controls.Add(this.tabPageLine);
+			tabControl.Controls.Add(this.tabPageCircle);
 			tabControl.Controls.Add(this.tabPageDimensions);
 			tabControl.Controls.Add(this.tabPageOptimization);
 
@@ -527,6 +593,9 @@ namespace EBNFForm
 			buttonLineColor.Click += new System.EventHandler(this.buttonLineColor_Click);
 			buttonLineMore.Click += new System.EventHandler(this.buttonLineMore_Click);
 			buttonLineLess.Click += new System.EventHandler(this.buttonLineLess_Click);
+			buttonCircleColor.Click += new System.EventHandler(this.buttonCircleColor_Click);
+			buttonCircleMore.Click += new System.EventHandler(this.buttonCircleMore_Click);
+			buttonCircleLess.Click += new System.EventHandler(this.buttonCircleLess_Click);
 			buttonArrowMore.Click += new System.EventHandler(this.buttonArrowMore_Click);
 			buttonArrowLess.Click += new System.EventHandler(this.buttonArrowLess_Click);
 			buttonHorizontalMore.Click += new System.EventHandler(this.buttonHorizontalMore_Click);
@@ -552,6 +621,17 @@ namespace EBNFForm
 			}
 		}
 
+		// change the color of the line
+		private void buttonCircleColor_Click(object sender, System.EventArgs e)
+		{
+			colorDialog1.Color = Node.CircleBrush.Color;
+
+			if (colorDialog1.ShowDialog() != DialogResult.Cancel)
+			{
+				labelCircleColor.BackColor = colorDialog1.Color;
+			}
+		}
+
 		// increase the size of the line
 		private void buttonLineMore_Click(object sender, System.EventArgs e)
 		{
@@ -568,6 +648,24 @@ namespace EBNFForm
 			if (Node.LinePen.Width == 1)
 				buttonLineLess.Enabled = false;
 			labelLineThickness.Text = Convert.ToString(Node.LinePen.Width);
+		}
+
+		// increase the diameter of the circle
+		private void buttonCircleMore_Click(object sender, System.EventArgs e)
+		{
+			Node.CircleDiameter += 2;
+			labelCircleDiameter.Text = Convert.ToString(Node.CircleDiameter);
+			buttonCircleMore.Enabled = true;
+		}
+
+		// decrease the diameter of the circle
+		private void buttonCircleLess_Click(object sender, System.EventArgs e)
+		{
+			if (Node.CircleDiameter - 2 > 0)
+				Node.CircleDiameter -= 2;
+			if (Node.CircleDiameter == 2)
+				buttonCircleLess.Enabled = false;
+			labelCircleDiameter.Text = Convert.ToString(Node.CircleDiameter);
 		}
 
 		// increase the horizontal dimension
@@ -665,14 +763,33 @@ namespace EBNFForm
 			labelFont.Font = Node.CharFont;
 			labelFont.ForeColor = Node.CharColor;
 			labelLineColor.BackColor = Node.LinePen.Color;
+			labelCircleColor.BackColor = Node.CircleBrush.Color;
 			labelGapHeight.Text = Convert.ToString(Node.ComponentGapHeight);
 			labelGapWidth.Text = Convert.ToString(Node.ComponentGapWidth - 26);
 			labelLineThickness.Text = Convert.ToString(Node.LinePen.Width);
+			labelCircleDiameter.Text = Convert.ToString(Node.CircleDiameter);
 			labelArrowSize.Text = Convert.ToString(Node.ArrowSize);
 			labelSymbolSize.Text = Convert.ToString(Node.SymbolGapHeight);
 			checkBoxOptimization.Checked = true;
 
-			if (Node.LinePen.Width <= 1) buttonLineLess.Enabled = false; else buttonLineLess.Enabled = true;
+			if (Node.LinePen.Width <= 1)
+			{
+				buttonLineLess.Enabled = false;
+			}
+			else
+			{ 
+				buttonLineLess.Enabled = true;
+			}
+
+			if (Node.CircleDiameter <= 2)
+			{
+				buttonCircleLess.Enabled = false;
+			}
+			else
+			{
+				buttonCircleLess.Enabled = true;
+			}
+
 			if (Node.SymbolGapHeight <= 0) buttonSymbolSizeLess.Enabled = false; else buttonSymbolSizeLess.Enabled = true;
 			if (Node.ArrowSize <= 1) buttonArrowLess.Enabled = false; else buttonArrowLess.Enabled = true;
 			if (Node.ComponentGapHeight <= 0) buttonVerticalLess.Enabled = false; else buttonVerticalLess.Enabled = true;
@@ -689,6 +806,8 @@ namespace EBNFForm
 			Node.ComponentGapWidth = Convert.ToInt16(labelGapWidth.Text) + 26;
 			Node.LinePen.Width = Convert.ToInt16(labelLineThickness.Text);
 			Node.LinePen.Color = labelLineColor.BackColor;
+			Node.CircleDiameter = Convert.ToInt16(labelCircleDiameter.Text);
+			Node.CircleBrush.Color = labelCircleColor.BackColor;
 			Node.OptimizeGraph = checkBoxOptimization.Checked;
 			this.drawGrammar();
 			form1.Close();
@@ -714,6 +833,8 @@ namespace EBNFForm
 			Node.ComponentGapWidth = Convert.ToInt16(labelGapWidth.Text) + 26;
 			Node.LinePen.Width = Convert.ToInt16(labelLineThickness.Text);
 			Node.LinePen.Color = labelLineColor.BackColor;
+			Node.CircleDiameter = Convert.ToInt16(labelCircleDiameter.Text);
+			Node.CircleBrush.Color = labelCircleColor.BackColor;
 			Node.OptimizeGraph = checkBoxOptimization.Checked;
 			this.drawGrammar();
 		}

@@ -144,6 +144,7 @@ namespace EBNFForm
 		private static int defaultCircleDiameter = 6;
 		private static Pen defaultLinePen = new Pen(Color.Black, 1);
 		private static SolidBrush defaultCircleBrush = new SolidBrush(Color.Black);
+		private static bool defaultCircleFilled = true;
 		private static int defaultSymbolGapHeight = 0;
 		private static Color defaultCharColor = Color.Black;
 
@@ -154,7 +155,8 @@ namespace EBNFForm
 		private static Font charFont = defaultCharFont;							// font of the t and nt symbols
 		private static int arrowSize = defaultArrowSize;						// size of the arrows
 		private static int circleDiameter = defaultCircleDiameter;              // size of the circles
-		private static SolidBrush circleBrush = defaultCircleBrush;				// colour of the circle
+		private static SolidBrush circleBrush = defaultCircleBrush;             // colour of the circle
+		private static bool circleFilled = defaultCircleFilled;					// filled or hollow circle
 		private static Pen linePen = defaultLinePen;							// color and thickness of the line
 		private static int symbolGapHeight = defaultSymbolGapHeight;            // gap between the line of the symbol and the font
 		private static Color charColor = defaultCharColor;						// fontColor of the T and NT symbols
@@ -649,7 +651,14 @@ namespace EBNFForm
 
 				//g.DrawRectangle(new Pen(Color.Orange,2),p.X,p.Y+30,s.graph.graphSize.Width,s.graph.graphSize.Height);
 				g.DrawLine(linePen, beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2, s.graph.l.posLine.Y, beginningXCoordinate, s.graph.l.posLine.Y);
-				g.FillEllipse(CircleBrush, new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - circleDiameter / 2), (int)(s.graph.l.posLine.Y- circleDiameter /2), circleDiameter, circleDiameter));
+				if (circleFilled)
+				{
+					g.FillEllipse(CircleBrush, new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - circleDiameter), (int)(s.graph.l.posLine.Y - circleDiameter / 2), circleDiameter, circleDiameter));
+				}
+				else
+				{
+					g.DrawEllipse(linePen, new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - circleDiameter), (int)(s.graph.l.posLine.Y - circleDiameter / 2), circleDiameter, circleDiameter));
+				}
 				s.graph.l.drawComponents(p, s.graph.graphSize);
 				// want to draw to node
 			}
@@ -904,7 +913,15 @@ namespace EBNFForm
 				if (n.next == null && firstLevel)
 				{
 					g.DrawLine(LinePen, p.X, n.posLine.Y, p.X + componentGapWidth / 4, n.posLine.Y);
-					g.FillEllipse(circleBrush, new RectangleF(p.X + componentGapWidth / 4 - circleDiameter / 2, n.posLine.Y - circleDiameter / 2, circleDiameter, circleDiameter));
+					drawArrow(linePen, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, "right");
+					if (circleFilled)
+					{
+						g.FillEllipse(circleBrush, new RectangleF(p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y - circleDiameter / 2, circleDiameter, circleDiameter));
+					}
+					else
+                    {
+						g.DrawEllipse(LinePen, new RectangleF(p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y - circleDiameter / 2, circleDiameter, circleDiameter));
+					}
 				}
 				n = n.next;
 			}

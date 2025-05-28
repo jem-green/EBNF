@@ -32,7 +32,7 @@ namespace EBNFForm
 {
 	public static class Scanner
 	{
-        #region Variables
+        #region Fields
 
         const char EOL = '\n';
 		
@@ -132,7 +132,26 @@ namespace EBNFForm
 			try
 			{
 				s = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-				Init(s);
+				if (s.Length > 0 )
+				{
+					s.Position = 1;
+					byte b = (byte)s.ReadByte();
+                    if (b != 255)
+					{
+						Init(s);
+
+					}
+					else
+					{
+                        EbnfForm.WriteLine("--- File " + fileName + " is not UTF8");
+                        s = null;
+                    }
+                }
+				else
+				{
+                    EbnfForm.WriteLine("--- File " + fileName + " is empty");
+					s = null;
+                }
 			}
 			catch (IOException)
 			{
@@ -354,6 +373,11 @@ namespace EBNFForm
 				case 15:
 					{
 						t.kind = 12;
+						goto done;
+					}
+				case 16:
+					{
+						t.kind = 13;
 						goto done;
 					}
 

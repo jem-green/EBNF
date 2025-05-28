@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ebnf.ico" />
+    <Content Include="ebnf.svg" />
     <Content Include="Resources\ebnf.ico" />
     <Content Include="manual.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

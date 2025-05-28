@@ -14,6 +14,7 @@ namespace EBNFForm
 
 		public static void Fill(Stream s)
 		{
+			s.Position = 0;
 			bufLen = (int)s.Length;
 			buf = new byte[bufLen];
 			s.Read(buf, 0, bufLen);

@@ -8,31 +8,31 @@ namespace EBNFForm
 {
 	public class Node
 	{
-        #region Variables
+        #region Fields
 
         public static ArrayList nodes = new ArrayList();
 		public static string[] nTyp = {"    ", "t   ", "nt  ", "eps ", "alt ", "iter", "opt ","reru"};
 
 		// constants for node kinds
-		public const int t = 1;  // terminal symbol
-		public const int nt = 2;  // nonterminal symbol
-		public const int eps = 3;  // empty
-		public const int alt = 4;  // alternative: |
-		public const int iter = 5;  // iteration: { }
-		public const int opt = 6;  // option: [ ]
-		public const int rerun = 7;  // the optimization of: a {a} or a {b a}
-		public const int wrap = 8;  // forces line break if found in the outer structure
+		public const int t = 1;				// terminal symbol
+		public const int nt = 2;			// nonterminal symbol
+		public const int eps = 3;			// empty
+		public const int alt = 4;			// alternative: |
+		public const int iter = 5;			// iteration: { }
+		public const int opt = 6;			// option: [ ]
+		public const int rerun = 7;			// the optimization of: a {a} or a {b a}
+		public const int wrap = 8;			// forces line break if found in the outer structure
+		public const int con = 9;			// concatenate symbol: ,
 
-
-		public int n;           // node number
-		public int typ;     // t, nt, eps, alt, iter, opt, rerun
-		public Node next;       // to successor node
-		public Node down;       // alt: to next alternative
-		public Node sub;        // alt, iter, opt: to first node of substructure
-		public bool up;         // true: "next" leads to successor in enclosing structure
-		public Symbol sym;      // nt, t: symbol represented by this node
-		public Node itergraph;  // rerun: points to the b in "a {b a}", null if "a {a}"
-		public bool firstLevel; // true if the Node is in the first Level
+		public int n;				// node number
+		public int typ;				// t, nt, eps, alt, iter, opt, rerun, con
+		public Node next;			// to successor node
+		public Node down;			// alt: to next alternative
+		public Node sub;			// alt, iter, opt: to first node of substructure
+		public bool up;				// true: "next" leads to successor in enclosing structure
+		public Symbol sym;			// nt, t: symbol represented by this node
+		public Node itergraph;		// rerun: points to the b in "a {b a}", null if "a {a}"
+		public bool firstLevel;		// true if the Node is in the first Level
 
 		public static bool trace = false;
 
@@ -66,7 +66,7 @@ namespace EBNFForm
         #region Methods
 
         //can change the type of node from t to nt later on
-        public static void terminalToNt(string name)
+        public static void TerminalToNt(string name)
 		{
 			foreach (Node n in nodes)
 			{
@@ -141,10 +141,10 @@ namespace EBNFForm
 		private static int defaultComponentGapHeight = 10;
 		private static Font defaultCharFont = new Font("Times", 12);
 		private static int defaultArrowSize = 3;
-		private static int defaultCircleDiameter = 6;
+		private static int defaultCircleDiameter = 8;
 		private static Pen defaultLinePen = new Pen(Color.Black, 1);
 		private static SolidBrush defaultCircleBrush = new SolidBrush(Color.Black);
-		private static bool defaultCircleFilled = true;
+		private static bool defaultCircleFilled = false;
 		private static int defaultSymbolGapHeight = 0;
 		private static Color defaultCharColor = Color.Black;
 
@@ -164,16 +164,16 @@ namespace EBNFForm
 		private static bool optimizeGraph = true;                               // enable optimizations?
 
 		/*****************other variables needed for the drawing********/
-		public Size size = new Size(0, 0);          // the required size to draw the node
-		public Size altSize = new Size(0, 0);           // the required size to draw a construct of alts or the size of the firstcomponent in the special rerun-node (itergraph!=null) 
-		public Size iterSize = new Size(0, 0);          // the size of the second component in the special rerun Node (itergraph!=null)
-		public PointF posBegin = new PointF(0, 0);          // the point in the left above corner of the component
-		public PointF posLine = new PointF(0, 0);           // the point of the line of the component
-		public PointF posEnd = new PointF(0, 0);            // the point in the left down corner of the component	
-		private static Size symbolSize = new Size(1, 1);            // the total size of the current Rule
-		private static int beginningXCoordinate = 50;                       // where the drawing starts (X)
-		private static int beginningYCoordinate = 40;                       // where the drawing starts (Y)
-		private static Graphics g = EbnfForm.BitmapGraphics;  // the graphics object from the EBNFForm on witch the drawing takes place
+		public Size size = new Size(0, 0);							// the required size to draw the node
+		public Size altSize = new Size(0, 0);						// the required size to draw a construct of alts or the size of the firstcomponent in the special rerun-node (itergraph!=null) 
+		public Size iterSize = new Size(0, 0);						// the size of the second component in the special rerun Node (itergraph!=null)
+		public PointF posBegin = new PointF(0, 0);					// the point in the left above corner of the component
+		public PointF posLine = new PointF(0, 0);					// the point of the line of the component
+		public PointF posEnd = new PointF(0, 0);					// the point in the left down corner of the component	
+		private static Size symbolSize = new Size(1, 1);			// the total size of the current Rule
+		private static int beginningXCoordinate = 50;				// where the drawing starts (X)
+		private static int beginningYCoordinate = 40;				// where the drawing starts (Y)
+		private static Graphics g = EbnfForm.BitmapGraphics;		// the graphics object from the EBNFForm on witch the drawing takes place
 
 		public static Font CharFont
 		{
@@ -309,7 +309,7 @@ namespace EBNFForm
 			}
 		}
 
-		public static void restoreDefaultSettings()
+		public static void RestoreDefaultSettings()
 		{
 			componentArcSize = defaultComponentArcSize;         // size of the arcs
 			componentGapWidth = defaultComponentGapWidth;       // gap between subcomponent size and actual size
@@ -325,14 +325,14 @@ namespace EBNFForm
 			optimizeGraph = true;
 		}
 
-		public static void calcDrawing()
+		public static void CalcDrawing()
 		{
 			foreach (Symbol s in Symbol.nonterminals)
 			{
 
-				s.graph.graphSize = s.graph.l.calcSize();
-				s.graph.l.setWrapSize();
-				s.graph.l.calcPos(beginningYCoordinate);
+				s.graph.graphSize = s.graph.l.CalcSize();
+				s.graph.l.SetWrapSize();
+				s.graph.l.CalcPos(beginningYCoordinate);
 				if (Node.trace)
 				{
 					PrintNodes();
@@ -342,7 +342,7 @@ namespace EBNFForm
 		}
 
 		// calculates the size if there are wraps in the rule
-		public void setWrapSize()
+		public void SetWrapSize()
 		{
 			Node n = this;
 			int maxH = 0;
@@ -375,13 +375,13 @@ namespace EBNFForm
 		}
 
 		// calculates the size of each symbol
-		public Size calcSize()
+		public Size CalcSize()
 		{
 			Node n = this;                          //current node in the level
 			Size s = new Size();                        //alt,iter,opt: size of current construct
 			int iterCompensation = 0;
 			bool samelevel = true;                  //next node in same level?
-			int realHeight = n.calcHeight();
+			int realHeight = n.CalcHeight();
 			Size maxTotalSize = new Size(0, 0);
 			while (n != null && samelevel)
 			{
@@ -404,19 +404,18 @@ namespace EBNFForm
 				}
 				else if (n.typ == Node.eps)
 				{
-
 					n.size.Height = fontHeight + componentGapHeight;
 					n.size.Width = componentGapWidth;
 				}
 				else if (n.typ == Node.opt)
 				{
-					n.size = n.sub.calcSize();
+					n.size = n.sub.CalcSize();
 					n.size.Width += componentGapWidth * 2;
 					n.size.Height += componentGapHeight / 2;
 				}
 				else if (n.typ == Node.iter)
 				{
-					n.size = n.sub.calcSize();
+					n.size = n.sub.CalcSize();
 					n.size.Width += componentGapWidth * 2;
 				}
 				else if (n.typ == Node.wrap)
@@ -429,14 +428,14 @@ namespace EBNFForm
 				}
 				else if (n.typ == Node.rerun)
 				{
-					n.size = n.sub.calcSize();
+					n.size = n.sub.CalcSize();
 					if (n.itergraph != null)
 					{
 						n.altSize = n.size;
-						if (n.size.Width < n.itergraph.calcSize().Width)
-							n.size.Width = n.itergraph.calcSize().Width;
-						n.size.Height += n.itergraph.calcSize().Height;
-						n.iterSize = n.itergraph.calcSize();
+						if (n.size.Width < n.itergraph.CalcSize().Width)
+							n.size.Width = n.itergraph.CalcSize().Width;
+						n.size.Height += n.itergraph.CalcSize().Height;
+						n.iterSize = n.itergraph.CalcSize();
 					}
 					else
 						n.size.Height += componentGapHeight / 2;
@@ -447,7 +446,7 @@ namespace EBNFForm
 					Node a = n; int maxH = -componentGapHeight, maxW = 0;
 					while (a != null)
 					{
-						a.size = a.sub.calcSize();
+						a.size = a.sub.CalcSize();
 						maxH += a.size.Height;
 						if (a.size.Width > maxW) maxW = a.size.Width;
 						a = a.down;
@@ -497,7 +496,7 @@ namespace EBNFForm
 		}
 
 		// calculates the total height of all symbols wich are in the same horizontal level
-		public int calcHeight()
+		public int CalcHeight()
 		{
 			Node n = this;                          //current node in the level
 			int realHeight = 0;
@@ -517,13 +516,13 @@ namespace EBNFForm
 				}
 				else if (n.typ == Node.opt || n.typ == Node.rerun)
 				{
-					int tmpHeight = n.sub.calcHeight();
+					int tmpHeight = n.sub.CalcHeight();
 					if (realHeight < tmpHeight) { }
 					realHeight = tmpHeight;
 				}
 				else if (n.typ == Node.alt)
 				{
-					int tmpHeight = n.sub.calcHeight();
+					int tmpHeight = n.sub.CalcHeight();
 					if (realHeight < tmpHeight) { }
 					realHeight = tmpHeight;
 				}
@@ -541,12 +540,11 @@ namespace EBNFForm
 			return realHeight;
 		}
 
-
 		// calcualtes the horizontal position of the symbols
-		public void calcPos(float posBegin)
+		public void CalcPos(float posBegin)
 		{
 			Node n = this;                          //current node in the level
-			int realHeight = calcHeight();
+			int realHeight = CalcHeight();
 			bool samelevel = true;                  //next node in same level?
 			while (n != null && samelevel)
 			{
@@ -567,7 +565,7 @@ namespace EBNFForm
 					n.posLine.Y = posBegin + realHeight / 2;
 					n.posBegin.Y = posBegin;
 					n.posEnd.Y = posBegin + n.size.Height;
-					n.sub.calcPos(n.posBegin.Y);
+					n.sub.CalcPos(n.posBegin.Y);
 				}
 				else if (n.typ == Node.rerun)
 				{
@@ -576,9 +574,9 @@ namespace EBNFForm
 					n.posEnd.Y = posBegin + n.size.Height;
 					if (n.itergraph != null)
 					{
-						n.itergraph.calcPos(posBegin + n.altSize.Height);
+						n.itergraph.CalcPos(posBegin + n.altSize.Height);
 					}
-					n.sub.calcPos(n.posBegin.Y);
+					n.sub.CalcPos(n.posBegin.Y);
 				}
 				else if (n.typ == Node.iter)
 				{
@@ -594,7 +592,7 @@ namespace EBNFForm
 						n.posBegin.Y = posBegin + (fontHeight + componentGapHeight) / 2;
 						n.posEnd.Y = n.posBegin.Y + n.size.Height;
 					}
-					n.sub.calcPos(n.posLine.Y);
+					n.sub.CalcPos(n.posLine.Y);
 				}
 				else if (n.typ == Node.wrap && firstLevel)
 				{
@@ -608,14 +606,14 @@ namespace EBNFForm
 					n.posLine.Y = posBegin + realHeight / 2;
 					n.posBegin.Y = posBegin;
 					n.posEnd.Y = posBegin + n.altSize.Height;
-					if (n.sub.typ == iter && n.calcHeight() != 0 && n.altSize.Height != 0)
+					if (n.sub.typ == iter && n.CalcHeight() != 0 && n.altSize.Height != 0)
 						posBegin += (fontHeight + componentGapHeight) / 2;
-					n.sub.calcPos(posBegin);
+					n.sub.CalcPos(posBegin);
 					if (n.down != null)
 					{
-						n.down.calcPos(posBegin + n.size.Height);
+						n.down.CalcPos(posBegin + n.size.Height);
 					}
-					if (n.sub.typ == iter && n.calcHeight() != 0 && n.altSize.Height != 0)
+					if (n.sub.typ == iter && n.CalcHeight() != 0 && n.altSize.Height != 0)
 						posBegin -= (fontHeight + componentGapHeight) / 2;
 				}
 				if (n.up)
@@ -626,13 +624,13 @@ namespace EBNFForm
 			}
 		}
 
-		public static void drawComponent(Symbol s)
+		public static void DrawComponent(Symbol s)
 		{
-			drawComponent(s, null);
+			DrawComponent(s, null);
 		}
 
 		// starts to draw the rule at the given symbol s
-		public static void drawComponent(Symbol s, Graphics vg)
+		public static void DrawComponent(Symbol s, Graphics vg)
 		{
 			if (s != null)
 			{
@@ -659,14 +657,13 @@ namespace EBNFForm
 				{
 					g.DrawEllipse(linePen, new Rectangle((int)(beginningXCoordinate - componentGapWidth / 4 - componentArcSize / 2 - circleDiameter), (int)(s.graph.l.posLine.Y - circleDiameter / 2), circleDiameter, circleDiameter));
 				}
-				s.graph.l.drawComponents(p, s.graph.graphSize);
+				s.graph.l.DrawComponents(p, s.graph.graphSize);
 				// want to draw to node
 			}
 		}
 
-
 		// draws arrows for different directions
-		public void drawArrow(Pen pen, float x, float y, float x1, float y1, String direction)
+		public void DrawArrow(Pen pen, float x, float y, float x1, float y1, String direction)
 		{
 			g.DrawLine(pen, x, y, x1, y1);
 			PointF arrowHead = new PointF(x1, y1);
@@ -707,7 +704,7 @@ namespace EBNFForm
 		 * Recursive procedure. Therefore also the drawComponentsInverse procedure is used.
 		 * Each component paints itself and then they give their coordinates to its innercomponents.
 		*/
-		public void drawComponents(PointF p, Size s)
+		public void DrawComponents(PointF p, Size s)
 		{
 			Node n = this;                          // current node in the level
 			bool samelevel = true;                  // next node in same level?
@@ -743,17 +740,17 @@ namespace EBNFForm
 					drawFormat.Alignment = StringAlignment.Center;
 					drawFormat.LineAlignment = StringAlignment.Center;
 					g.DrawString(n.sym.name, charFont, new SolidBrush(charColor), new Rectangle((int)p.X, (int)n.posBegin.Y, n.size.Width, n.size.Height - componentGapHeight - 2), drawFormat);
-					drawArrow(linePen, p.X, n.posLine.Y, p.X, n.posLine.Y, "right");
+					DrawArrow(linePen, p.X, n.posLine.Y, p.X, n.posLine.Y, "right");
 					p.X += n.size.Width;
 					// draw lines between t and nt nodes
 					if (!n.up && n.next != null && (n.next.typ == Node.t || n.next.typ == Node.nt))
 					{
-						drawArrow(linePen, p.X, n.posLine.Y, p.X + componentGapWidth / 2, n.posLine.Y, "right");
+						DrawArrow(linePen, p.X, n.posLine.Y, p.X + componentGapWidth / 2, n.posLine.Y, "right");
 						p.X += componentGapWidth / 2;
 					}
 					if (!n.up && n.next != null && n.next.typ == Node.wrap && n.next.size.Height == 0)
 					{
-						drawArrow(linePen, p.X, n.posLine.Y, p.X + componentGapWidth / 2, n.posLine.Y, "right");
+						DrawArrow(linePen, p.X, n.posLine.Y, p.X + componentGapWidth / 2, n.posLine.Y, "right");
 						p.X += componentGapWidth / 2;
 					}
 				}
@@ -783,7 +780,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize, n.posEnd.Y - componentGapHeight / 2, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.posEnd.Y - componentGapHeight / 2);
 
 					p1.X = p.X + componentGapWidth;
-					n.sub.drawComponents(p1, n.size);
+					n.sub.DrawComponents(p1, n.size);
 					p.X += n.size.Width;
 				}
 				else if (n.typ == Node.rerun && n.itergraph == null)
@@ -805,7 +802,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize - 1, n.posEnd.Y - componentGapHeight / 2, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.posEnd.Y - componentGapHeight / 2);
 
 					p1.X = p.X + componentGapWidth;
-					n.sub.drawComponents(p1, n.size);
+					n.sub.DrawComponents(p1, n.size);
 					p.X += n.size.Width;
 				}
 				else if (n.typ == Node.rerun && n.itergraph != null)
@@ -827,8 +824,8 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize, n.itergraph.posLine.Y, p.X + n.size.Width / 2 - n.iterSize.Width / 2 - 1, n.itergraph.posLine.Y);
 					g.DrawLine(linePen, p.X + n.size.Width / 2 + n.iterSize.Width / 2 + 1, n.itergraph.posLine.Y, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.itergraph.posLine.Y);
 
-					n.itergraph.drawComponentsInverse(new PointF(p.X + n.size.Width / 2 + n.iterSize.Width / 2, n.posEnd.Y), n.size);
-					n.sub.drawComponents(new PointF(p.X + n.size.Width / 2 - n.altSize.Width / 2, n.posEnd.Y), n.size);
+					n.itergraph.DrawComponentsInverse(new PointF(p.X + n.size.Width / 2 + n.iterSize.Width / 2, n.posEnd.Y), n.size);
+					n.sub.DrawComponents(new PointF(p.X + n.size.Width / 2 - n.altSize.Width / 2, n.posEnd.Y), n.size);
 					p.X += n.size.Width;
 				}
 				else if (n.typ == Node.iter)
@@ -850,7 +847,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X, n.posLine.Y, p.X + n.size.Width, n.posLine.Y);
 
 					p1.X = p.X - componentGapWidth + n.size.Width;
-					n.sub.drawComponentsInverse(p1, n.size);
+					n.sub.DrawComponentsInverse(p1, n.size);
 					p.X += n.size.Width;
 				}
 				else if (n.typ == Node.wrap && n.size.Height != 0 && n.next != null)
@@ -902,7 +899,7 @@ namespace EBNFForm
 							g.DrawArc(linePen, p.X - componentArcSize * 2 + n.altSize.Width, a.sub.posLine.Y - componentArcSize, componentArcSize, componentArcSize, 0, 90);
 							g.DrawLine(linePen, p.X - componentArcSize + n.altSize.Width, n.posLine.Y + componentArcSize / 2, p.X - componentArcSize + n.altSize.Width, a.posLine.Y - componentArcSize / 2 + 1);
 						}
-						a.sub.drawComponents(new PointF(p.X + (n.altSize.Width - a.size.Width) / 2, a.posEnd.Y), a.size);
+						a.sub.DrawComponents(new PointF(p.X + (n.altSize.Width - a.size.Width) / 2, a.posEnd.Y), a.size);
 						a = a.down;
 					}
 					p.X += n.altSize.Width;
@@ -913,7 +910,7 @@ namespace EBNFForm
 				if (n.next == null && firstLevel)
 				{
 					g.DrawLine(LinePen, p.X, n.posLine.Y, p.X + componentGapWidth / 4, n.posLine.Y);
-					drawArrow(linePen, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, "right");
+					DrawArrow(linePen, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y, "right");
 					if (circleFilled)
 					{
 						g.FillEllipse(circleBrush, new RectangleF(p.X + componentGapWidth / 4 + arrowSize, n.posLine.Y - circleDiameter / 2, circleDiameter, circleDiameter));
@@ -931,7 +928,7 @@ namespace EBNFForm
 		 * Draw the components from right to left.
 		 * Needed if for example in an iter-node.
 		 */
-		public void drawComponentsInverse(PointF p, Size s)
+		public void DrawComponentsInverse(PointF p, Size s)
 		{
 			Node n = this;                          //current node in the level
 			bool samelevel = true;                  //next node in same level?
@@ -967,18 +964,18 @@ namespace EBNFForm
 					drawFormat.Alignment = StringAlignment.Center;
 					drawFormat.LineAlignment = StringAlignment.Center;
 					g.DrawString(n.sym.name, charFont, new SolidBrush(charColor), new Rectangle((int)p.X, (int)n.posBegin.Y, n.size.Width, n.size.Height - componentGapHeight - 2), drawFormat);
-					drawArrow(linePen, p.X + n.size.Width, n.posLine.Y, p.X + n.size.Width, n.posLine.Y, "left");
+					DrawArrow(linePen, p.X + n.size.Width, n.posLine.Y, p.X + n.size.Width, n.posLine.Y, "left");
 
 					if (!n.up && n.next != null && (n.next.typ == Node.t || n.next.typ == Node.nt))
 					{
-						drawArrow(linePen, p.X, n.posLine.Y, p.X - componentGapWidth / 2, n.posLine.Y, "left");
+						DrawArrow(linePen, p.X, n.posLine.Y, p.X - componentGapWidth / 2, n.posLine.Y, "left");
 						p.X -= componentGapWidth / 2;
 					}
 					if (!n.up && n.next != null && n.next.typ == Node.wrap && n.next.size.Height == 0)
 					{
 						if (!n.next.up && n.next.next != null && (n.next.next.typ == Node.t || n.next.next.typ == Node.nt))
 						{
-							drawArrow(linePen, p.X, n.posLine.Y, p.X - componentGapWidth / 2, n.posLine.Y, "left");
+							DrawArrow(linePen, p.X, n.posLine.Y, p.X - componentGapWidth / 2, n.posLine.Y, "left");
 							p.X -= componentGapWidth / 2;
 						}
 					}
@@ -1009,7 +1006,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize, n.posEnd.Y - componentGapHeight / 2, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.posEnd.Y - componentGapHeight / 2);
 
 					p1.X = p.X + n.size.Width - componentGapWidth;
-					n.sub.drawComponentsInverse(p1, n.size);
+					n.sub.DrawComponentsInverse(p1, n.size);
 				}
 
 				else if (n.typ == Node.rerun && n.itergraph == null)
@@ -1031,7 +1028,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize - 1, n.posEnd.Y - componentGapHeight / 2, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.posEnd.Y - componentGapHeight / 2);
 
 					p1.X = p.X + n.size.Width - componentGapWidth;
-					n.sub.drawComponentsInverse(p1, n.size);
+					n.sub.DrawComponentsInverse(p1, n.size);
 				}
 				else if (n.typ == Node.rerun && n.itergraph != null)
 				{
@@ -1052,8 +1049,8 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X + componentGapWidth / 4 + componentArcSize, n.itergraph.posLine.Y, p.X + n.size.Width / 2 - n.iterSize.Width / 2 - 1, n.itergraph.posLine.Y);
 					g.DrawLine(linePen, p.X + n.size.Width / 2 + n.iterSize.Width / 2 + 1, n.itergraph.posLine.Y, p.X - componentGapWidth / 4 - componentArcSize + n.size.Width + 1, n.itergraph.posLine.Y);
 
-					n.sub.drawComponentsInverse(new PointF(p.X + n.size.Width / 2 + n.altSize.Width / 2, n.posEnd.Y), n.size);
-					n.itergraph.drawComponents(new PointF(p.X + n.size.Width / 2 - n.iterSize.Width / 2, n.posEnd.Y), n.size);
+					n.sub.DrawComponentsInverse(new PointF(p.X + n.size.Width / 2 + n.altSize.Width / 2, n.posEnd.Y), n.size);
+					n.itergraph.DrawComponents(new PointF(p.X + n.size.Width / 2 - n.iterSize.Width / 2, n.posEnd.Y), n.size);
 
 				}
 				else if (n.typ == Node.iter)
@@ -1075,7 +1072,7 @@ namespace EBNFForm
 					g.DrawLine(linePen, p.X, n.posLine.Y, p.X + n.size.Width, n.posLine.Y);
 
 					p1.X = p.X + componentGapWidth;
-					n.sub.drawComponents(p1, n.size);
+					n.sub.DrawComponents(p1, n.size);
 				}
 				else if (n.typ == Node.alt)
 				{
@@ -1111,7 +1108,7 @@ namespace EBNFForm
 							g.DrawLine(linePen, p.X - componentArcSize + n.altSize.Width, n.posLine.Y + componentArcSize / 2, p.X - componentArcSize + n.altSize.Width, a.posLine.Y - componentArcSize / 2 + 1);
 						}
 						PointF pf = new PointF(p.X + (n.altSize.Width + a.size.Width) / 2, p1.Y);
-						a.sub.drawComponentsInverse(pf, a.size);
+						a.sub.DrawComponentsInverse(pf, a.size);
 						a = a.down;
 					}
 				}
@@ -1248,7 +1245,6 @@ namespace EBNFForm
 				if (optimizeGraph) Node.OptimizeIter(s.graph.l, null, s);
 			}
 		}
-
 
 		//removes all unnecessary and wrong linebreaks (wrap-nodes) from the graph
 		public static void RemoveWrongLinebreaks(Node n, Node parent, Symbol s)
@@ -1512,7 +1508,6 @@ namespace EBNFForm
 				n = n.next;
 			}
 		}
-
 
 		//removes all empty iter/opt nodes in alternatives, as well as multiple eps nodes at the beginning:
 		//they would bug a condition in RemoveEps

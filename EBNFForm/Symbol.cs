@@ -7,7 +7,7 @@ namespace EBNFForm
 {
 	public class Symbol
 	{
-        #region Variables
+        #region Fields
 
         public static ArrayList terminals = new ArrayList();
 		public static ArrayList nonterminals = new ArrayList();

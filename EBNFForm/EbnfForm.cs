@@ -67,9 +67,15 @@ namespace EBNFForm
 			}
 		}
 
-		public EbnfForm()
+		public EbnfForm(string filename)
 		{
 			InitializeComponent();
+			if (filename.Length != 0)
+			{
+				this.LoadFile(filename);
+				this.menuItemSave.Enabled = false;
+				this.menuItemCopy.Enabled = false;
+			}
 		}
 
 		///////////////////////////////////////////////////////////////////////////////
@@ -238,7 +244,7 @@ namespace EBNFForm
 
 
 			Graphics vg = Graphics.FromImage(m);
-			Node.drawComponent(currentSymbol, vg);
+			Node.DrawComponent(currentSymbol, vg);
 			vg.Dispose();
 			m.Dispose();
 			fs.Close();
@@ -409,8 +415,6 @@ namespace EBNFForm
 			labelSymbolSize.Text = Convert.ToString(Node.SymbolGapHeight);
 			checkBoxOptimization.Text = "Enable optimizations (reload required)";
 
-
-
 			labelFont.Font = Node.CharFont;
 			labelFont.ForeColor = Node.CharColor;
 			labelFont.BackColor = Color.White;
@@ -466,7 +470,6 @@ namespace EBNFForm
 			groupBoxThickness.Size = new Size(100, 50);
 			
 			groupBoxDiameter.Size = new Size(100, 50);
-
 
 			groupBoxArrow.Size = new Size(100, 50);
 			groupBoxHorizontal.Size = new Size(100, 50);
@@ -759,7 +762,7 @@ namespace EBNFForm
 		// use the default settings
 		private void buttonRestoreDefault_Click(object sender, System.EventArgs e)
 		{
-			Node.restoreDefaultSettings();
+			Node.RestoreDefaultSettings();
 			labelFont.Text = Node.CharFont.Name;
 			labelFont.Font = Node.CharFont;
 			labelFont.ForeColor = Node.CharColor;
@@ -864,8 +867,6 @@ namespace EBNFForm
 			gp.Size = new Size(about.Width - 37, about.Height - 100);
 			gp.Location = new Point(15, 10);
 
-
-
 			info.Text = "EBNF Visualizer 1.1\n\nCopyright (c) 2005 Stefan Schoergenhumer, Markus Dopler \n\nSupported by Hanspeter Moessenboeck, University of Linz\n\nThis program is licensed under GPL. For further information see license.txt.";
 			info.Location = new Point(5, 10);
 			info.Size = new Size(gp.Width - 10, gp.Height - 20);
@@ -887,7 +888,7 @@ namespace EBNFForm
 
 		private void component_paint(object sender, PaintEventArgs e)
 		{
-			Node.drawComponent(currentSymbol);
+			Node.DrawComponent(currentSymbol);
 			Graphics xGraph;
 			xGraph = e.Graphics;
 			xGraph.DrawImage(DrawArea, 0, 0, DrawArea.Width, DrawArea.Height);
@@ -896,7 +897,7 @@ namespace EBNFForm
 		private void drawGrammar()
 		{
 			InitializeDrawArea();
-			Node.calcDrawing();
+			Node.CalcDrawing();
 			this.Refresh();
 		}
 
@@ -909,7 +910,7 @@ namespace EBNFForm
 
 		private void SetCurrentSymbol(object sender, System.EventArgs e)
 		{
-			rulehistory.Clear();
+			ruleHistory.Clear();
 			foreach (MenuItem mi in menuItemRules.MenuItems)
 			{
 				mi.Checked = false;
@@ -919,7 +920,7 @@ namespace EBNFForm
 			menuItemSave.Enabled = true;
 			menuItemCopy.Enabled = true;
 			currentSymbol = Symbol.Find(temp.Text);
-			rulehistory.Push(currentSymbol);
+			ruleHistory.Push(currentSymbol);
 			this.drawGrammar();
 			EbnfForm.WriteLine("Switched to rule: " + currentSymbol.name + ".");
 		}
@@ -973,7 +974,7 @@ namespace EBNFForm
 			Node.nodes = new ArrayList();
 			currentSymbol = null;
 			menuItemRules.MenuItems.Clear();
-			rulehistory.Clear();
+			ruleHistory.Clear();
 
 			Scanner.Init(path);
 			Parser.Parse();
@@ -1015,7 +1016,7 @@ namespace EBNFForm
 		//-----------Mousecontrol + Nonterminalsearch for cruise on click--------------
 		///////////////////////////////////////////////////////////////////////////////
 
-		private static Stack rulehistory = new Stack();
+		private static Stack ruleHistory = new Stack();
 
 		private void Form_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
@@ -1023,16 +1024,18 @@ namespace EBNFForm
 			if (currentSymbol == null) return;
 			Node nt = null;
 
-			if (e.Button == MouseButtons.Left) nt = FindNT(currentSymbol.graph.l, new PointF(e.X, e.Y));
-			if (e.Button == MouseButtons.Right && rulehistory.Count > 1)
+			if (e.Button == MouseButtons.Left)
+			{ 
+				nt = FindNT(currentSymbol.graph.l, new PointF(e.X, e.Y));
+			}
+			if (e.Button == MouseButtons.Right && ruleHistory.Count > 1)
 			{
-				rulehistory.Pop();
-				Symbol s = (Symbol)rulehistory.Peek();
+				ruleHistory.Pop();
+				Symbol s = (Symbol)ruleHistory.Peek();
 				SwitchToRule(s);
 			}
-
-
 		}
+
 		private void SwitchToRule(Symbol s)
 		{
 			currentSymbol = s;
@@ -1056,7 +1059,7 @@ namespace EBNFForm
 					if (p.X >= n.posBegin.X && p.X <= n.posEnd.X && p.Y >= n.posBegin.Y && p.Y <= n.posEnd.Y)
 					{
 						SwitchToRule(n.sym);
-						rulehistory.Push(n.sym);
+						ruleHistory.Push(n.sym);
 					}
 				}
 
@@ -1102,21 +1105,39 @@ namespace EBNFForm
 		///////////////////////////////////////////////////////////////////////////////
 
 		[STAThread]
-		public static void Main(string[] arg)
+		public static void Main(string[] args)
 		{
-			if (arg.Length == 1)
+
+			string filename = "";
+
+			int items = args.Length;
+			if (items == 1)
 			{
-				if (arg[0] == "-trace")
+				filename = args[0];
+			}
+			else
+			{
+				for (int item = 0; item < items; item++)
 				{
-					Node.trace = true;
-				}
-				else
-				{
-					Console.WriteLine("Optional parameter:\n" +
-									  "-trace		...print graph");
+					switch (args[item])
+					{
+						case "/T":
+						case "--trace":
+							{
+								Node.trace = true;
+								break;
+							}
+						case "/F":
+						case "--filename":
+                            {
+								filename = args[item + 1];
+								filename = filename.Trim();
+								break;
+                            }
+					}
 				}
 			}
-			Application.Run(new EbnfForm());
+			Application.Run(new EbnfForm(filename));
 		}
 	}
 }

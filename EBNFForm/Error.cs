@@ -6,7 +6,7 @@ namespace EBNFForm
 {
 	public static class Errors
 	{
-        #region Varaibles
+        #region Variables
         
 		public static int count = 0;                                    // number of errors detected
 		public static string errMsgFormat = "-- line {0} col {1}: {2}"; // 0=line, 1=column, 2=text
